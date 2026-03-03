@@ -1,0 +1,65 @@
+#FIND-S algorithm
+import numpy as np
+
+def find_s(concepts, target):
+    """
+    Implements the FIND-S algorithm to find the most specific hypothesis.
+
+    Args:
+        concepts (list of lists): The training examples (attributes).
+        target (list): The target classifications ('yes' or 'no').
+
+    Returns:
+        list: The most specific hypothesis.
+    """
+    # Initialize the most specific hypothesis with the first positive example
+    # If the first example is 'no', find the first 'yes' example to initialize.
+    specific_h = None
+    for i, h in enumerate(concepts):
+        if target[i] == "yes":
+            specific_h = list(h)
+            break
+
+    if specific_h is None:
+        return [] # No positive examples, no specific hypothesis
+
+    # Iterate through the training examples
+    for i, h in enumerate(concepts):
+        # Only consider positive examples
+        if target[i] == "yes":
+            # Compare each attribute of the current example with the specific hypothesis
+            for x in range(len(specific_h)):
+                # If attributes don't match, generalize the hypothesis
+                if h[x] != specific_h[x]:
+                    specific_h[x] = '?'
+
+    return specific_h
+
+# --- Custom Input Example ---
+
+# Define the training data (concepts/attributes)
+# Each inner list represents an example with attributes like Sky, AirTemp, Humidity, Wind, Water, Forecast
+concepts_data = np.array([
+    ['sunny', 'warm', 'normal', 'strong', 'warm', 'same'],
+    ['sunny', 'warm', 'high', 'strong', 'warm', 'same'],
+    ['rainy', 'cold', 'high', 'strong', 'warm', 'change'],
+    ['sunny', 'warm', 'high', 'strong', 'cool', 'change']
+])
+
+# Define the target classification for each example ('yes' or 'no')
+target_data = np.array(['yes', 'yes', 'no', 'yes'])
+
+print("Training Concepts:")
+print(concepts_data)
+print("\nTarget Data:")
+print(target_data)
+
+
+Training Concepts:
+[['sunny' 'warm' 'normal' 'strong' 'warm' 'same']
+ ['sunny' 'warm' 'high' 'strong' 'warm' 'same']
+ ['rainy' 'cold' 'high' 'strong' 'warm' 'change']
+ ['sunny' 'warm' 'high' 'strong' 'cool' 'change']]
+
+Target Data:
+['yes' 'yes' 'no' 'yes']
